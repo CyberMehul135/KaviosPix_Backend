@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const successResponse = require("../utils/successResponse");
 const errorResponse = require("../utils/errorResponse");
+const { path } = require("../app");
 
 const googleAuthRedirect = async (req, res) => {
   const { redirect } = req.query;
@@ -23,17 +24,37 @@ const googleAuthCallback = async (req, res) => {
   // (1) Exchange code for Google-Access-Token
   let accessToken;
   try {
+    // const tokenResponse = await axios.post(
+    //   "https://oauth2.googleapis.com/token",
+    //   {
+    //     client_id: process.env.GOOGLE_CLIENT_ID,
+    //     client_secret: process.env.GOOGLE_CLIENT_SECRET,
+    //     code,
+    //     grant_type: "authorization_code",
+    //     redirect_uri: `${process.env.BACKEND_URL}/api/v1/auth/google/callback`,
+    //   },
+    //   {
+    //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    //   },
+    // );
+
+    const params = new URLSearchParams();
+    params.append("client_id", process.env.GOOGLE_CLIENT_ID);
+    params.append("client_secret", process.env.GOOGLE_CLIENT_SECRET);
+    params.append("code", code);
+    params.append("grant_type", "authorization_code");
+    params.append(
+      "redirect_uri",
+      `${process.env.BACKEND_URL}/api/v1/auth/google/callback`,
+    );
+
     const tokenResponse = await axios.post(
       "https://oauth2.googleapis.com/token",
+      params,
       {
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        code,
-        grant_type: "authorization_code",
-        redirect_uri: `${process.env.BACKEND_URL}/api/v1/auth/google/callback`,
-      },
-      {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
       },
     );
 
@@ -75,6 +96,7 @@ const googleAuthCallback = async (req, res) => {
       httpOnly: true,
       secure: true, // Local: false  // Production: true
       sameSite: "none", // Local: "lax"    // Production: "none"
+      path: "/",
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
 
