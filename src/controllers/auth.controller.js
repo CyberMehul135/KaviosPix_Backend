@@ -9,7 +9,7 @@ const errorResponse = require("../utils/errorResponse");
 const googleAuthRedirect = async (req, res) => {
   const { redirect } = req.query;
 
-  const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:${PORT}/api/v1/auth/google/callback&response_type=code&scope=profile email&state=${redirect || "/"}`;
+  const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.BACKEND_URL}/api/v1/auth/google/callback&response_type=code&scope=profile email&state=${redirect || "/"}`;
 
   res.redirect(googleAuthUrl);
 };
@@ -30,7 +30,7 @@ const googleAuthCallback = async (req, res) => {
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
         code,
         grant_type: "authorization_code",
-        redirect_uri: `${process.env.FRONTEND_URL}/api/v1/auth/google/callback`,
+        redirect_uri: `${process.env.BACKEND_URL}/api/v1/auth/google/callback`,
       },
       {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -73,8 +73,8 @@ const googleAuthCallback = async (req, res) => {
     // (5) Secure Cookie
     res.cookie("access_token", jwtToken, {
       httpOnly: true,
-      secure: false, // Local: false  // Production: true
-      sameSite: "lax", // Local: "lax"    // Production: "none"
+      secure: true, // Local: false  // Production: true
+      sameSite: "none", // Local: "lax"    // Production: "none"
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
 
