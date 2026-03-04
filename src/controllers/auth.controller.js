@@ -119,7 +119,9 @@ const getUserDetails = async (req, res) => {
 };
 
 const verifySession = (req, res) => {
-  successResponse(res, 200, "Authenticated user");
+  successResponse(res, 200, "Authenticated user", {
+    user: req.user,
+  });
 };
 
 const logoutUser = async (req, res) => {
