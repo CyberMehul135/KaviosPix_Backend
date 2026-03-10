@@ -21,13 +21,14 @@ const createImage = async (req, res) => {
   try {
     const file = req.file;
     const albumId = req.params.albumId;
+    console.log(req.file);
 
     // Validation of data
     validateCreateImageData(req);
     // Check Duplicate entry
 
     // Upload to cloudinary
-    const result = await uploadOnCloudinary(file.path);
+    const result = await uploadOnCloudinary(req.file.path);
 
     // Save to DB
     const image = new Image({
