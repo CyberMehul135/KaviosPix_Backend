@@ -31,7 +31,6 @@ const createImage = async (req, res) => {
     // Check Duplicate entry
 
     // Upload to cloudinary
-    // const result = await uploadOnCloudinary(file.path);
     const result = await uploadOnCloudinary(file.buffer);
 
     // Save to DB
@@ -47,11 +46,6 @@ const createImage = async (req, res) => {
 
     successResponse(res, 201, "Image added successfully", { image: saveImage });
   } catch (err) {
-    // File unlink from server in any error
-    // if (req.file && req.file.path && fs.existsSync(req.file.path)) {
-    //   fs.unlinkSync(req.file.path);
-    // }
-
     errorResponse(
       res,
       err.statusCode || 500,
