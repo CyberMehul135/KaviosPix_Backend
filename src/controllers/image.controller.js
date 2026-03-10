@@ -22,6 +22,9 @@ const createImage = async (req, res) => {
     const file = req.file;
     const albumId = req.params.albumId;
 
+    console.log("file:", req.file);
+    console.log("buffer size:", file?.buffer?.length);
+
     // Validation of data
     validateCreateImageData(req);
 
