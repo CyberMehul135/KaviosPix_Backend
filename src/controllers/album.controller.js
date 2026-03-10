@@ -37,7 +37,7 @@ const createAlbum = async (req, res) => {
     }
 
     // Upload to cloudinary
-    const result = await uploadOnCloudinary(file.path);
+    const result = await uploadOnCloudinary(file.buffer);
 
     // Save to DB
     const album = new Album({
