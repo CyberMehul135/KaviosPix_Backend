@@ -58,6 +58,7 @@ const createImage = async (req, res) => {
 const getAlbumImages = async (req, res) => {
   try {
     const albumId = new mongoose.Types.ObjectId(req.params.albumId);
+    const tags = req.query.tags ? req.query.tags.split(",") : [];
 
     const result = await Album.aggregate([
       {
@@ -66,8 +67,23 @@ const getAlbumImages = async (req, res) => {
       {
         $lookup: {
           from: "images",
-          localField: "_id",
-          foreignField: "albumId",
+          let: { albumId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$albumId", "$$albumId"] },
+              },
+            },
+            ...(tags.length
+              ? [
+                  {
+                    $match: {
+                      tags: { $in: tags },
+                    },
+                  },
+                ]
+              : []),
+          ],
           as: "images",
         },
       },

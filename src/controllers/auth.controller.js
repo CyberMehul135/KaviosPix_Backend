@@ -6,11 +6,12 @@ const jwt = require("jsonwebtoken");
 const successResponse = require("../utils/successResponse");
 const errorResponse = require("../utils/errorResponse");
 const { path } = require("../app");
+const config = require("../config/env");
 
 const googleAuthRedirect = async (req, res) => {
   const { redirect } = req.query;
 
-  const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.BACKEND_URL}/api/v1/auth/google/callback&response_type=code&scope=profile email&state=${redirect || "/"}`;
+  const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${config.BACKEND_URL}/api/v1/auth/google/callback&response_type=code&scope=profile email&state=${redirect || "/"}`;
 
   res.redirect(googleAuthUrl);
 };
@@ -45,7 +46,7 @@ const googleAuthCallback = async (req, res) => {
     params.append("grant_type", "authorization_code");
     params.append(
       "redirect_uri",
-      `${process.env.BACKEND_URL}/api/v1/auth/google/callback`,
+      `${config.BACKEND_URL}/api/v1/auth/google/callback`,
     );
 
     const tokenResponse = await axios.post(
@@ -102,7 +103,7 @@ const googleAuthCallback = async (req, res) => {
 
     const redirectUrl = state || "/";
 
-    return res.redirect(`${process.env.FRONTEND_URL}${redirectUrl}`);
+    return res.redirect(`${config.FRONTEND_URL}${redirectUrl}`);
   } catch (error) {
     console.error(error);
   }
