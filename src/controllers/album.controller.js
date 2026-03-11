@@ -118,6 +118,7 @@ const getSharedAlbums = async (req, res) => {
       {
         $match: {
           ownerId: new mongoose.Types.ObjectId(user.userId),
+          $expr: { $gte: [{ $size: "$sharedUsers" }, 1] },
         },
       },
       {
