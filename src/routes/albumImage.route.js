@@ -9,6 +9,7 @@ const {
   createImage,
   getAlbumImages,
   getFavouriteAlbumImages,
+  getAlbumImagesTags,
   likeImage,
   addComment,
   deleteImage,
@@ -33,6 +34,7 @@ router.get(
   albumAccessMiddleware,
   getFavouriteAlbumImages,
 );
+router.get("/tags", authMiddleware, albumAccessMiddleware, getAlbumImagesTags);
 router.put(
   "/:imageId/favourite",
   authMiddleware,

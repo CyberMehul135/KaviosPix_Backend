@@ -100,6 +100,44 @@ const getAlbumImages = async (req, res) => {
   }
 };
 
+const getAlbumImagesTags = async (req, res) => {
+  try {
+    const albumId = new mongoose.Types.ObjectId(req.params.albumId);
+
+    const result = await Image.aggregate([
+      {
+        $match: { albumId: albumId },
+      },
+      {
+        $unwind: "$tags",
+      },
+      {
+        $group: {
+          _id: null,
+          tags: { $addToSet: "$tags" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          tags: 1,
+        },
+      },
+    ]);
+
+    const tags = result[0]?.tags || [];
+
+    successResponse(res, 200, "Tags fetched successfully", { tags });
+  } catch (err) {
+    errorResponse(
+      res,
+      err.statusCode || 500,
+      err.message || "Internal server error",
+      err.errors,
+    );
+  }
+};
+
 const getFavouriteAlbumImages = async (req, res) => {
   try {
     const { albumId } = req.params;
@@ -414,4 +452,5 @@ module.exports = {
 
   getAllImages,
   getAllFavouriteImages,
+  getAlbumImagesTags,
 };
